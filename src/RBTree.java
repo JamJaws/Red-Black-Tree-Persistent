@@ -117,6 +117,26 @@ public class RBTree<T extends Comparable> {
         node.parent = right;
     }
 
+    public void rightRotate(Node<T> node) {
+        Node<T> left = node.left;
+        node.left = left.right;
+        if (!left.right.equals(this.nil)) {
+            left.right.parent = node;
+        }
+        left.parent = node.parent;
+        if (left.parent.equals(this.nil)) {
+            this.root = left;
+        }
+        else if (node.equals(node.parent.left)) {
+            node.parent.left = left;
+        }
+        else {
+            node.parent.right = left;
+        }
+        left.right = node;
+        node.parent = left;
+    }
+
     // misc
 
     public ArrayList<T> inOrder() {
