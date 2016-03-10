@@ -10,8 +10,7 @@ public class Main {
         RBTree<Integer> rbTree = new RBTree<Integer>();
         Scanner reader = new Scanner(System.in);
 
-        System.out.print("Insert: ");
-        String input = reader.next();
+        String input = "";
         while (input.toLowerCase() != "exit") {
             System.out.print("Insert: ");
             input = reader.next();
