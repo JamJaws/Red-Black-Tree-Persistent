@@ -84,12 +84,23 @@ public class RBTree<T extends Comparable> {
                     node.parent.parent.setRed(true);
                     node = node.parent.parent;
                 }
-                else if (false) {
+                else if (node.equals(node.parent.right)) {
                     // case 2
+                    node = node.parent;
+                    leftRotate(node);
+                }
+                else {
+                    // case 3
+                    node.parent.setRed(false);
+                    node.parent.parent.setRed(true);
+                    rightRotate(node.parent.parent);
                 }
             }
             else {
+                // @TODO left right exchanged
+                System.out.println("WARNING, NOT IMPLEMENTED!");
                 // same wirh right and left exchanged
+                break;
             }
         }
 
