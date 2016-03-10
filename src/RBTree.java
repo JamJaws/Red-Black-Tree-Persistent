@@ -97,7 +97,6 @@ public class RBTree<T extends Comparable> {
                 }
             }
             else {
-                System.out.println("WARNING, NOT IMPLEMENTED!");
                 // same wirh right and left exchanged
                 Node<T> uncle = node.parent.parent.left;
                 if (uncle.red) {
@@ -193,10 +192,13 @@ public class RBTree<T extends Comparable> {
         if (node == this.nil) {
             return "";
         }
+        if (!node.equals(this.root)) {
+            padding += (node.parent.equals(node.parent.parent.left) && !node.parent.parent.right.equals(this.nil) ? "| " : "  ");
+        }
         String print = padding + nodeId + "-" + (node.red ? "\u001B[31m" : "") + node.element.toString() + "\u001B[0m" + "\n";
 
-        print += this.printRec(node.left, padding + (node.parent.right != this.nil ? "| " : "  "), "L");
-        print += this.printRec(node.right, padding + "  ", "R");
+        print += this.printRec(node.left, padding, "L");
+        print += this.printRec(node.right, padding, "R");
         return print;
     }
 
