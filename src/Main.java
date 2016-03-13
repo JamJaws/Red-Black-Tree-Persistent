@@ -14,14 +14,15 @@ public class Main {
         System.out.println("1. Manual, 2. Random");
         System.out.print("Input: ");
         String input = "";
-            input = reader.next();
+            input = reader.nextLine();
         switch (input) {
             case ("1"):
                 while (input.toLowerCase() != "exit") {
                     System.out.print("Insert: ");
                     input = reader.next();
                     rbTree.insert(Integer.parseInt(input));
-                    rbTree.print();
+                    // rbTree.print();
+                    rbTree.printAll();
                 }
                 break;
             case ("2"):
@@ -34,6 +35,7 @@ public class Main {
                     inserts++;
                 }
                 rbTree.print();
+                rbTree.printAll();
 
                 break;
             default:

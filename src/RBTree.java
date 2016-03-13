@@ -7,6 +7,7 @@ public class RBTree<T extends Comparable> {
 
     private Node<T> root;
     private Node<T> nil;
+    private ArrayList<Node<T>> roots;
 
     public RBTree() {
         this.nil = new Node<T>(null, null, null,null);
@@ -16,6 +17,7 @@ public class RBTree<T extends Comparable> {
         this.nil.setRed(false);
 
         this.root = this.nil;
+        this.roots = new ArrayList<>();
     }
 
     private class Node<T> {
@@ -33,24 +35,65 @@ public class RBTree<T extends Comparable> {
             this.red = true;
         }
 
+        public Node(T element, Node<T> parent, Node<T> left, Node<T> right, Boolean red) {
+            this.element = element;
+            this.parent = parent;
+            this.left = left;
+            this.right = right;
+            this.red = red;
+        }
+
         public void setRed(Boolean red) {
             this.red = red;
+        }
+
+        public Node clone() {
+            return new Node<T>(this.element, this.parent, this.left, this.right, this.red);
         }
     }
 
     public void insert(T element) {
-        Node<T> parent = this.nil;
-        Node<T> a = this.root;
+
+        // RBTree<T> newTree = new RBTree<T>();
+        // Node<T> rootClone = null;
+        // Node<T> parentClone = rootClone;
+        // Boolean left = false;
+
+        this.root = (!this.root.equals(this.nil) ? this.root.clone() : this.nil);
 
         // walk down tree
-        while (a != this.nil) {
+        Node<T> parent = this.nil;
+        Node<T> a = this.root;
+        while (!a.equals(this.nil)) {
             parent = a;
+            // Node<T> clone = rootClone;
+
+
+            // Node<T> clone = a.left.clone();
+
             if (element.compareTo(a.element) < 0) {
+                if (!a.left.equals(this.nil)) {
+                    a.left = a.left.clone();
+                    a.left.parent = a;
+                }
+                //clone.parent = parentClone;
+                //parentClone.left = clone;
+                //parentClone = clone;
                 a = a.left;
             }
             else {
+                if (!a.right.equals(this.nil)) {
+                    a.right = a.right.clone();
+                    a.right.parent = a;
+                }
+                //Node<T> clone = a.left.clone();
+                //clone.parent = parentClone;
+                //parentClone.right = clone;
+                //parentClone = clone;
                 a = a.right;
             }
+
+
         }
 
         Node<T> newNode;
@@ -62,24 +105,27 @@ public class RBTree<T extends Comparable> {
         }
         else if (element.compareTo(parent.element) < 0) {
             newNode = new Node<T>(element, parent, this.nil, this.nil);
-            parent.left = new Node<T>(element, parent, this.nil, this.nil);
+            parent.left = newNode;
         }
         else {
             newNode = new Node<T>(element, parent, this.nil, this.nil);
-            parent.right = new Node<T>(element, parent, this.nil, this.nil);
+            parent.right = newNode;
         }
 
         // fix
         fix(newNode);
+        this.roots.add(this.root);
     }
 
     private void fix(Node <T> node) {
         while (node.parent.red) {
             if (node.parent.equals(node.parent.parent.left)) {
-                Node<T> uncle = node.parent.parent.right;
-                if (uncle.red) {
+
+                if (node.parent.parent.right.red) {
                     // case 1
                     node.parent.setRed(false);
+                    Node<T> uncle = node.parent.parent.right.clone();
+                    node.parent.parent.right = uncle;
                     uncle.setRed(false);
                     node.parent.parent.setRed(true);
                     node = node.parent.parent;
@@ -98,10 +144,11 @@ public class RBTree<T extends Comparable> {
             }
             else {
                 // same wirh right and left exchanged
-                Node<T> uncle = node.parent.parent.left;
-                if (uncle.red) {
+                if (node.parent.parent.left.red) {
                     // case 1
                     node.parent.setRed(false);
+                    Node<T> uncle = node.parent.parent.left.clone();
+                    node.parent.parent.left = uncle;
                     uncle.setRed(false);
                     node.parent.parent.setRed(true);
                     node = node.parent.parent;
@@ -182,13 +229,23 @@ public class RBTree<T extends Comparable> {
     }
 
     public String print() {
-        String print = "";
-        print = this.printRec(this.root, "", "+");
+        String print = this.printRec(this.root, "", "+");
         System.out.print(print);
         return print;
     }
 
-    public String printRec(Node<T> node, String padding, String nodeId) {
+    public String printAll() {
+        String print = "";
+        for (int i = 0; i < this.roots.size(); i++) {
+            print += "Tree " + (i + 1) + ":\n";
+            print += this.printRec(this.roots.get(i), "", "+");
+            print += "\n\n";
+        }
+        System.out.print(print);
+        return print;
+
+    }
+    private String printRec(Node<T> node, String padding, String nodeId) {
         if (node == this.nil) {
             return "";
         }
