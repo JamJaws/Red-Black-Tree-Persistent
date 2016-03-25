@@ -173,9 +173,13 @@ public class RBTree<T extends Comparable> {
 
     public void leftRotate(Node<T> node) {
         Node<T> right = node.right;
-        node.right = right.left;
+        // node.right = right.left;
         if (!right.left.equals(this.nil)) {
-            right.left.parent = node;
+            node.right = right.left.clone();
+            node.right.parent = node;
+        }
+        else {
+            node.right = this.nil;
         }
         right.parent = node.parent;
         if (node.parent.equals(this.nil)) {
@@ -193,9 +197,13 @@ public class RBTree<T extends Comparable> {
 
     public void rightRotate(Node<T> node) {
         Node<T> left = node.left;
-        node.left = left.right;
+        // node.left = left.right;
         if (!left.right.equals(this.nil)) {
-            left.right.parent = node;
+            node.left = left.right.clone();
+            node.left.parent = node;
+        }
+        else {
+            node.left = this.nil;
         }
         left.parent = node.parent;
         if (left.parent.equals(this.nil)) {
@@ -229,7 +237,7 @@ public class RBTree<T extends Comparable> {
     }
 
     public String print() {
-        String print = this.printRec(this.root, "", "+");
+        String print = this.printRec(this.root, "", "+", this.root);
         System.out.print(print);
         return print;
     }
@@ -238,24 +246,24 @@ public class RBTree<T extends Comparable> {
         String print = "";
         for (int i = 0; i < this.roots.size(); i++) {
             print += "Tree " + (i + 1) + ":\n";
-            print += this.printRec(this.roots.get(i), "", "+");
+            print += this.printRec(this.roots.get(i), "", "+", this.roots.get(i));
             print += "\n\n";
         }
         System.out.print(print);
         return print;
 
     }
-    private String printRec(Node<T> node, String padding, String nodeId) {
+    private String printRec(Node<T> node, String padding, String nodeId, Node<T> root) {
         if (node == this.nil) {
             return "";
         }
-        if (!node.equals(this.root)) {
+        if (!node.equals(root)) {
             padding += (node.parent.equals(node.parent.parent.left) && !node.parent.parent.right.equals(this.nil) ? "| " : "  ");
         }
         String print = padding + nodeId + "-" + (node.red ? "\u001B[31m" : "") + node.element.toString() + "\u001B[0m" + "\n";
 
-        print += this.printRec(node.left, padding, "L");
-        print += this.printRec(node.right, padding, "R");
+        print += this.printRec(node.left, padding, "L", root);
+        print += this.printRec(node.right, padding, "R", root);
         return print;
     }
 

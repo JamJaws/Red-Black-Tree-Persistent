@@ -14,33 +14,44 @@ public class Main {
         System.out.println("1. Manual, 2. Random");
         System.out.print("Input: ");
         String input = "";
-            input = reader.nextLine();
-        switch (input) {
-            case ("1"):
-                while (input.toLowerCase() != "exit") {
-                    System.out.print("Insert: ");
-                    input = reader.next();
-                    rbTree.insert(Integer.parseInt(input));
-                    // rbTree.print();
+        input = reader.nextLine();
+        while (!input.equals("exit")) {
+            switch (input) {
+                case ("1"):
+                    while (input.toLowerCase() != "exit") {
+                        System.out.print("Insert: ");
+                        input = reader.nextLine();
+
+                        if (input.equals("d")) {
+                            rbTree.printAll();
+                        }
+                        rbTree.insert(Integer.parseInt(input));
+
+                        rbTree.print();
+                        // rbTree.printAll();
+                    }
+                    break;
+                case ("2"):
+                    Random rand = new Random();
+                    Integer inserts = 0;
+
+                    while (inserts < 20) {
+                        Integer nr = rand.nextInt(50) + 1;
+                        rbTree.insert(nr);
+                        inserts++;
+                        System.out.println(inserts + ": inserting \"" + nr + "\"");
+                        rbTree.print();
+                    }
+                    // rbTree.printAll();
+
+                    break;
+                case ("3"):
                     rbTree.printAll();
-                }
-                break;
-            case ("2"):
-                Random rand = new Random();
-                Integer inserts = 0;
+                default:
 
-                while (inserts < 10) {
-                    Integer nr = rand.nextInt(50) + 1;
-                    rbTree.insert(nr);
-                    inserts++;
-                }
-                rbTree.print();
-                rbTree.printAll();
-
-                break;
-            default:
-
-                break;
+                    break;
+            }
+            input = reader.nextLine();
         }
     }
 }
