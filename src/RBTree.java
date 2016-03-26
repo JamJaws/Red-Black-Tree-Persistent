@@ -112,10 +112,12 @@ public class RBTree<T extends Comparable> {
 
     private void fix(Node<T> node, ArrayList<Node<T>> parents) {
         // last parent
+        int parentOffset = 0;
         Node<T> parent = parents.size() > 1 ? parents.get(parents.size()-1) : this.nil;
         Node<T> grandParent = parents.size() > 2 ? parents.get(parents.size()-2) : this.nil;
 
-        while (parent.red) {
+
+        while (!parent.equals(this.nil) && parent.red) {
             if (parent.equals(grandParent.left)) {
 
                 if (grandParent.right.red) {
@@ -126,6 +128,10 @@ public class RBTree<T extends Comparable> {
                     uncle.setRed(false);
                     grandParent.setRed(true);
                     node = grandParent;
+
+                    parentOffset += 2;
+                    parent = parents.size() > parentOffset + 1 ? parents.get(parents.size() - parentOffset - 1) : this.nil;
+                    grandParent = parents.size() > parentOffset + 2 ? parents.get(parents.size() - parentOffset - 2) : this.nil;
                 }
                 else if (node.equals(parent.right)) {
                     // case 2
