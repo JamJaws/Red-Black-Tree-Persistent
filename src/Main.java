@@ -40,14 +40,28 @@ public class Main {
                     Random rand = new Random();
                     Integer inserts = 0;
 
+                    System.out.print("#: ");
+                    input = reader.nextLine();
+                    Integer nr = Integer.parseInt(input);
+
+                    System.out.print("From: ");
+                    input = reader.nextLine();
+                    Integer from = Integer.parseInt(input);
+
+                    System.out.print("To: ");
+                    input = reader.nextLine();
+                    Integer to = Integer.parseInt(input);
+
+
+
                     for (int i = 0; i < 1; i++) {
 
                         rbTree = new RBTree<>();
-                        while (inserts < 20) {
-                            Integer nr = rand.nextInt(50) + 1;
+                        while (inserts < nr) {
+                            Integer random = rand.nextInt(to - from + 1) + from;
                             inserts++;
                             // System.out.println(inserts + ": inserting \"" + nr + "\"");
-                            rbTree.insert(nr);
+                            rbTree.insert(random);
                             // rbTree.print();
                         }
                         rbTree.print();
