@@ -6,6 +6,8 @@ import java.util.ArrayList;
 public class RBTree<T extends Comparable> {
 
     Boolean debug = false;
+    Boolean visualization = false;
+
 
     private Node<T> root;
     private Node<T> nil;
@@ -13,7 +15,6 @@ public class RBTree<T extends Comparable> {
 
     public RBTree() {
         this.nil = new Node<T>(null, null, null,null);
-//        this.nil.parent = this.nil;
         this.nil.left = this.nil;
         this.nil.right = this.nil;
         this.nil.setRed(false);
@@ -24,14 +25,12 @@ public class RBTree<T extends Comparable> {
 
     private class Node<T> {
         private T element;
-        // private Node<T> parent;
         private Node<T> left;
         private Node<T> right;
         private Boolean red;
 
         public Node(T element, Node<T> left, Node<T> right) {
             this.element = element;
-//            this.parent = parent;
             this.left = left;
             this.right = right;
             this.red = true;
@@ -39,7 +38,6 @@ public class RBTree<T extends Comparable> {
 
         public Node(T element, Node<T> left, Node<T> right, Boolean red) {
             this.element = element;
-//            this.parent = parent;
             this.left = left;
             this.right = right;
             this.red = red;
@@ -58,42 +56,21 @@ public class RBTree<T extends Comparable> {
 
         ArrayList<Node<T>> path = new ArrayList<>();
 
-//        this.root = (!this.root.equals(this.nil) ? this.root.clone() : this.nil);
-
         // walk down tree
-//        Node<T> parent = this.nil;
         Node<T> a = !this.root.equals(this.nil) ? this.root.clone() : this.nil;
         while (!a.equals(this.nil)) {
-//            parent = a;
             path.add(a);
 
             if (element.compareTo(a.element) < 0) {
                 if (!a.left.equals(this.nil)) {
                     a.left = a.left.clone();
                 }
-
-//                if (!a.left.equals(this.nil)) {
-//
-////                    a.left = a.left.clone();
-////                    a.left.parent = a;
-//                }
-                //clone.parent = parentClone;
-                //parentClone.left = clone;
-                //parentClone = clone;
                 a = a.left;
             }
             else {
                 if (!a.right.equals(this.nil)) {
                     a.right = a.right.clone();
                 }
-//                if (!a.right.equals(this.nil)) {
-////                    a.right = a.right.clone();
-////                    a.right.parent = a;
-//                }
-                //Node<T> clone = a.left.clone();
-                //clone.parent = parentClone;
-                //parentClone.right = clone;
-                //parentClone = clone;
                 a = a.right;
             }
         }
@@ -127,6 +104,7 @@ public class RBTree<T extends Comparable> {
         Node<T> grandParent = getParent(parent, path);
 
         while (parent.red) {
+
             if (debug) {
                 System.out.println("Node: " + node.element);
                 System.out.println("Parent: " + parent.element);
@@ -135,10 +113,12 @@ public class RBTree<T extends Comparable> {
             }
 
             if (parent.equals(grandParent.left)) {
-                if (debug) System.out.println("left");
+                if (debug) System.out.println("Left");
 
                 if (grandParent.right.red) {
-                    if (debug) System.out.println("case 1");
+                    if (debug) System.out.println("Case 1");
+                    if (visualization) printViz("Case 1: uncle is red -> flip color");
+
                     // case 1
                     parent.setRed(false);
                     Node<T> uncle = grandParent.right.clone();
@@ -152,7 +132,8 @@ public class RBTree<T extends Comparable> {
                     grandParent = getParent(parent, path);
                 }
                 else if (node.equals(parent.right)) {
-                    if (debug) System.out.println("case 2");
+                    if (debug) System.out.println("Case 2");
+                    if (visualization) printViz("Case 2 -> left rotate \"" + parent.element + "\"");
                     // case 2
                     leftRotate(parent, grandParent);
 
@@ -164,7 +145,8 @@ public class RBTree<T extends Comparable> {
 
                 }
                 else {
-                    if (debug) System.out.println("case 3");
+                    if (debug) System.out.println("Case 3");
+                    if (visualization) printViz("Case 3 -> right rotate \"" + grandParent.element + "\"");
                     // case 3
                     parent.setRed(false);
                     grandParent.setRed(true);
@@ -174,10 +156,11 @@ public class RBTree<T extends Comparable> {
             }
 
             else {
-                if (debug) System.out.println("right");
+                if (debug) System.out.println("Right");
 
                 if (grandParent.left.red) {
-                    if (debug) System.out.println("case 1");
+                    if (debug) System.out.println("Case 1");
+                    if (visualization) printViz("Case 1 -> uncle is red -> flip color");
                     // case 1
                     parent.setRed(false);
                     Node<T> uncle = grandParent.left.clone();
@@ -191,7 +174,8 @@ public class RBTree<T extends Comparable> {
                     grandParent = getParent(parent, path);
                 }
                 else if (node.equals(parent.left)) {
-                    if (debug) System.out.println("case 2");
+                    if (debug) System.out.println("Case 2");
+                    if (visualization) printViz("Case 2 -> right rotate \"" + parent.element + "\"");
                     // case 2
                     rightRotate(parent, grandParent);
 
@@ -202,7 +186,8 @@ public class RBTree<T extends Comparable> {
                     parent = getParent(node, path);
                 }
                 else {
-                    if (debug) System.out.println("case 3");
+                    if (debug) System.out.println("Case 3");
+                    if (visualization) printViz("Case 3 -> left rotate \"" + grandParent.element + "\"");
                     // case 3
                     parent.setRed(false);
                     grandParent.setRed(true);
@@ -313,7 +298,7 @@ public class RBTree<T extends Comparable> {
         for (int i = 0; i < this.roots.size(); i++) {
             print += "Tree " + (i + 1) + ":\n";
             print += this.printRec(this.roots.get(i), "", "+", this.roots.get(i));
-            print += "\n\n";
+            print += "\n";
         }
         System.out.print(print);
         return print;
@@ -322,11 +307,6 @@ public class RBTree<T extends Comparable> {
     private String printRec(Node<T> node, String padding, String nodeId, Node<T> root) {
         if (node == this.nil) {
             return "";
-        }
-
-        if (!node.equals(root)) {
-//            padding += (node.parent.equals(node.parent.parent.left) && !node.parent.parent.right.equals(this.nil) ? "| " : "  ");
-//            padding += "  ";
         }
 
         String print = "";
@@ -343,10 +323,46 @@ public class RBTree<T extends Comparable> {
         int bh = 1;
         Node<T> a = this.root;
         while (a != this.nil) {
-            bh ++;
+            if (!a.red) bh ++;
             a = a.left;
         }
         return bh;
+    }
+
+    public void testBlackHeight() {
+        int bhLeft = 0;
+        Node<T> a = this.root;
+        while (a != this.nil) {
+            if (!a.red) bhLeft ++;
+            a = a.left;
+        }
+        int bhRight = 0;
+        a = this.root;
+        while (a != this.nil) {
+            if (!a.red) bhRight ++;
+            a = a.right;
+        }
+
+        int bhCenter = 0;
+        a = this.root;
+        boolean left = true;
+        while (a != this.nil) {
+            if (!a.red) bhCenter ++;
+            if (left) {
+                a = a.left;
+                left = false;
+            }
+            else {
+                a = a.right;
+                left = true;
+            }
+        }
+        if (bhLeft == bhCenter && bhCenter == bhRight) {
+            System.out.println("\u001B[32m" + "Black height \"" + bhLeft + "\" valid" + "\u001B[0m");
+        }
+        else {
+            System.out.println("\u001B[31m" + "BLACK HEIGHT ERROR" + "\u001B[0m");
+        }
     }
 
     // @TODO remove
@@ -365,5 +381,21 @@ public class RBTree<T extends Comparable> {
             System.out.print(node.element + " ");
         }
         System.out.println();
+    }
+
+    private void printViz(String str) {
+        System.out.println("\u001B[32m" + "Visualization" + "\u001B[0m");
+        print();
+        System.out.println("\u001B[33m" + str + "\u001B[0m");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void restoreTree(Integer root) {
+        this.root = this.roots.get(root);
+        System.out.println("Restored");
     }
 }

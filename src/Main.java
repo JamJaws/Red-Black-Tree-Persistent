@@ -22,13 +22,18 @@ public class Main {
                         System.out.print("Insert: ");
                         input = reader.nextLine();
 
-                        if (input.equals("d")) {
+                        if (input.equals("a")) {
                             rbTree.printAll();
                         }
-                        rbTree.insert(Integer.parseInt(input));
-
-                        rbTree.print();
-                        // rbTree.printAll();
+                        else if (input.equals("r")) {
+                            System.out.print("Tree #: ");
+                            input = reader.nextLine();
+                            rbTree.restoreTree(Integer.parseInt(input)-1);
+                        }
+                        else {
+                            rbTree.insert(Integer.parseInt(input));
+                            rbTree.print();
+                        }
                     }
                     break;
                 case ("2"):
@@ -46,6 +51,7 @@ public class Main {
                             // rbTree.print();
                         }
                         rbTree.print();
+                        // rbTree.testBlackHeight();
                         inserts = 0;
                         System.out.println(i+1);
 
