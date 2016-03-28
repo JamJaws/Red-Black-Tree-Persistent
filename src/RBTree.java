@@ -5,7 +5,7 @@ import java.util.ArrayList;
  */
 public class RBTree<T extends Comparable> {
 
-    Boolean debug = true;
+    Boolean debug = false;
 
     private Node<T> root;
     private Node<T> nil;
@@ -200,8 +200,6 @@ public class RBTree<T extends Comparable> {
 
                     node = parent;
                     parent = getParent(node, path);
-                    grandParent = getParent(grandParent, path);
-
                 }
                 else {
                     if (debug) System.out.println("case 3");
@@ -244,18 +242,15 @@ public class RBTree<T extends Comparable> {
     }
 
     public void leftRotate(Node<T> node, Node<T> parent) {
-        System.out.println("Left rotate node: " + node.element + ", parent:" + parent.element);
+        if (debug) System.out.println("Left rotate node: " + node.element + ", parent:" + parent.element);
 
         Node<T> right = node.right;
-        // node.right = right.left;
         if (!right.left.equals(this.nil)) {
             node.right = right.left; // clone???
-//            node.right.parent = node;
         }
         else {
             node.right = this.nil;
         }
-//        right.parent = node.parent;
         if (node.equals(this.root)) {
             this.root = right;
         }
@@ -266,22 +261,18 @@ public class RBTree<T extends Comparable> {
             parent.right = right;
         }
         right.left = node;
-//        node.parent = right;
     }
 
     public void rightRotate(Node<T> node, Node<T> parent) {
-        System.out.println("Right rotate node: " + node.element + ", parent:" + parent.element);
+        if (debug) System.out.println("Right rotate node: " + node.element + ", parent:" + parent.element);
 
         Node<T> left = node.left;
-        // node.left = left.right;
         if (!left.right.equals(this.nil)) {
             node.left = left.right; // clone??
-//            node.left.parent = node;
         }
         else {
             node.left = this.nil;
         }
-//        left.parent = node.parent;
         if (node.equals(this.root)) {
             this.root = left;
         }
@@ -292,7 +283,6 @@ public class RBTree<T extends Comparable> {
             parent.right = left;
         }
         left.right = node;
-//        node.parent = left;
     }
 
     // misc

@@ -27,7 +27,6 @@ public class Main {
                         }
                         rbTree.insert(Integer.parseInt(input));
 
-                        rbTree.printRoots();
                         rbTree.print();
                         // rbTree.printAll();
                     }
@@ -36,13 +35,22 @@ public class Main {
                     Random rand = new Random();
                     Integer inserts = 0;
 
-                    while (inserts < 20) {
-                        Integer nr = rand.nextInt(50) + 1;
-                        rbTree.insert(nr);
-                        inserts++;
-                        System.out.println(inserts + ": inserting \"" + nr + "\"");
+                    for (int i = 0; i < 1; i++) {
+
+                        rbTree = new RBTree<>();
+                        while (inserts < 20) {
+                            Integer nr = rand.nextInt(50) + 1;
+                            inserts++;
+                            // System.out.println(inserts + ": inserting \"" + nr + "\"");
+                            rbTree.insert(nr);
+                            // rbTree.print();
+                        }
                         rbTree.print();
+                        inserts = 0;
+                        System.out.println(i+1);
+
                     }
+
                     // rbTree.printAll();
 
                     break;
