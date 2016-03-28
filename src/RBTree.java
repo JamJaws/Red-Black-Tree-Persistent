@@ -5,6 +5,8 @@ import java.util.ArrayList;
  */
 public class RBTree<T extends Comparable> {
 
+    Boolean debug = true;
+
     private Node<T> root;
     private Node<T> nil;
     private ArrayList<Node<T>> roots;
@@ -54,18 +56,22 @@ public class RBTree<T extends Comparable> {
 
     public void insert(T element) {
 
-        ArrayList<Node<T>> parents = new ArrayList<>();
+        ArrayList<Node<T>> path = new ArrayList<>();
 
 //        this.root = (!this.root.equals(this.nil) ? this.root.clone() : this.nil);
 
         // walk down tree
 //        Node<T> parent = this.nil;
-        Node<T> a = this.root;
+        Node<T> a = !this.root.equals(this.nil) ? this.root.clone() : this.nil;
         while (!a.equals(this.nil)) {
 //            parent = a;
+            path.add(a);
 
             if (element.compareTo(a.element) < 0) {
-                parents.add(a.clone());
+                if (!a.left.equals(this.nil)) {
+                    a.left = a.left.clone();
+                }
+
 //                if (!a.left.equals(this.nil)) {
 //
 ////                    a.left = a.left.clone();
@@ -77,7 +83,9 @@ public class RBTree<T extends Comparable> {
                 a = a.left;
             }
             else {
-                parents.add(a.clone());
+                if (!a.right.equals(this.nil)) {
+                    a.right = a.right.clone();
+                }
 //                if (!a.right.equals(this.nil)) {
 ////                    a.right = a.right.clone();
 ////                    a.right.parent = a;
@@ -93,60 +101,117 @@ public class RBTree<T extends Comparable> {
         Node<T> newNode = new Node<T>(element, this.nil, this.nil);
 
         // empty tree -> new root
-        if (parents.size() == 0) {
+        if (path.size() == 0) {
             this.root = newNode;
         }
-        else if (element.compareTo(parents.get(parents.size()-1).element) < 0) {
-            parents.get(parents.size()-1).left = newNode;
-            this.root = parents.get(0); // @TODO fix bug
+        else if (element.compareTo(path.get(path.size()-1).element) < 0) {
+            path.get(path.size()-1).left = newNode;
+            this.root = path.get(0); // @TODO fix bug
         }
         else {
-            parents.get(parents.size()-1).right = newNode;
-            this.root = parents.get(0); // @TODO fix bug
+            path.get(path.size()-1).right = newNode;
+            this.root = path.get(0); // @TODO fix bug
         }
 
+        path.add(newNode);
+
         // fix
-        fix(newNode, parents);
+        fix(path);
         this.roots.add(this.root);
     }
 
-    private void fix(Node<T> node, ArrayList<Node<T>> parents) {
-        // last parent
-        int parentOffset = 0;
-        Node<T> parent = parents.size() > 1 ? parents.get(parents.size()-1) : this.nil;
-        Node<T> grandParent = parents.size() > 2 ? parents.get(parents.size()-2) : this.nil;
+    private void fix(ArrayList<Node<T>> path) {
 
+        Node<T> node = path.get(path.size()-1);
+        Node<T> parent = getParent(node, path);
+        Node<T> grandParent = getParent(parent, path);
 
-        while (!parent.equals(this.nil) && parent.red) {
+        while (parent.red) {
+            if (debug) {
+                System.out.println("Node: " + node.element);
+                System.out.println("Parent: " + parent.element);
+                System.out.println("Grandpa: " + grandParent.element);
+                this.printPath(path);
+            }
+
             if (parent.equals(grandParent.left)) {
+                if (debug) System.out.println("left");
 
                 if (grandParent.right.red) {
+                    if (debug) System.out.println("case 1");
                     // case 1
                     parent.setRed(false);
                     Node<T> uncle = grandParent.right.clone();
                     grandParent.right = uncle;
                     uncle.setRed(false);
                     grandParent.setRed(true);
-                    node = grandParent;
 
-                    parentOffset += 2;
-                    parent = parents.size() > parentOffset + 1 ? parents.get(parents.size() - parentOffset - 1) : this.nil;
-                    grandParent = parents.size() > parentOffset + 2 ? parents.get(parents.size() - parentOffset - 2) : this.nil;
+
+                    node = grandParent;
+                    parent = getParent(node, path);
+                    grandParent = getParent(parent, path);
                 }
                 else if (node.equals(parent.right)) {
+                    if (debug) System.out.println("case 2");
                     // case 2
+                    leftRotate(parent, grandParent);
+
+                    // swap in path
+                    path.add(path.indexOf(parent), path.remove(path.indexOf(node)));
+
                     node = parent;
-                    leftRotate(node, grandParent);
+                    parent = getParent(node, path);
+
                 }
                 else {
+                    if (debug) System.out.println("case 3");
                     // case 3
                     parent.setRed(false);
                     grandParent.setRed(true);
-                    rightRotate(grandParent, parents.get(parents.size()-3));
+                    rightRotate(grandParent, getParent(grandParent, path));
                 }
+
             }
-            /*
+
             else {
+                if (debug) System.out.println("right");
+
+                if (grandParent.left.red) {
+                    if (debug) System.out.println("case 1");
+                    // case 1
+                    parent.setRed(false);
+                    Node<T> uncle = grandParent.left.clone();
+                    grandParent.left = uncle;
+                    uncle.setRed(false);
+                    grandParent.setRed(true);
+
+
+                    node = grandParent;
+                    parent = getParent(node, path);
+                    grandParent = getParent(parent, path);
+                }
+                else if (node.equals(parent.left)) {
+                    if (debug) System.out.println("case 2");
+                    // case 2
+                    rightRotate(parent, grandParent);
+
+                    // swap in path
+                    path.add(path.indexOf(parent), path.remove(path.indexOf(node)));
+
+                    node = parent;
+                    parent = getParent(node, path);
+                    grandParent = getParent(grandParent, path);
+
+                }
+                else {
+                    if (debug) System.out.println("case 3");
+                    // case 3
+                    parent.setRed(false);
+                    grandParent.setRed(true);
+                    leftRotate(grandParent, getParent(grandParent, path));
+                }
+
+                /*
                 // same wirh right and left exchanged
                 if (node.parent.parent.left.red) {
                     // case 1
@@ -156,27 +221,31 @@ public class RBTree<T extends Comparable> {
                     uncle.setRed(false);
                     node.parent.parent.setRed(true);
                     node = node.parent.parent;
-                }
-                else if (node.equals(node.parent.left)) {
+                } else if (node.equals(node.parent.left)) {
                     // case 2
                     node = node.parent;
                     rightRotate(node);
-                }
-                else {
+                } else {
                     // case 3
                     node.parent.setRed(false);
                     node.parent.parent.setRed(true);
                     leftRotate(node.parent.parent);
                 }
+                */
             }
-            */
         }
 
         // set root black
         this.root.setRed(false);
     }
 
+    private Node<T> getParent(Node<T> node, ArrayList<Node<T>> path) {
+        return path.indexOf(node)-1 > -1 ? path.get(path.indexOf(node)-1) : this.nil;
+    }
+
     public void leftRotate(Node<T> node, Node<T> parent) {
+        System.out.println("Left rotate node: " + node.element + ", parent:" + parent.element);
+
         Node<T> right = node.right;
         // node.right = right.left;
         if (!right.left.equals(this.nil)) {
@@ -201,6 +270,8 @@ public class RBTree<T extends Comparable> {
     }
 
     public void rightRotate(Node<T> node, Node<T> parent) {
+        System.out.println("Right rotate node: " + node.element + ", parent:" + parent.element);
+
         Node<T> left = node.left;
         // node.left = left.right;
         if (!left.right.equals(this.nil)) {
@@ -262,14 +333,19 @@ public class RBTree<T extends Comparable> {
         if (node == this.nil) {
             return "";
         }
+
         if (!node.equals(root)) {
 //            padding += (node.parent.equals(node.parent.parent.left) && !node.parent.parent.right.equals(this.nil) ? "| " : "  ");
-            padding += "  ";
+//            padding += "  ";
         }
-        String print = padding + nodeId + "-" + (node.red ? "\u001B[31m" : "") + node.element.toString() + "\u001B[0m" + "\n";
 
-        print += this.printRec(node.left, padding, "L", root);
-        print += this.printRec(node.right, padding, "R", root);
+        String print = "";
+
+        print += this.printRec(node.right, padding + (nodeId.equals("L") ? "| " : "  "), "R", root);
+
+        print += padding + nodeId + "-" + (node.red ? "\u001B[31m" : "") + node.element.toString() + "\u001B[0m" + "\n";
+
+        print += this.printRec(node.left, padding + (nodeId.equals("R") ? "| " : "  "), "L", root);
         return print;
     }
 
@@ -281,5 +357,23 @@ public class RBTree<T extends Comparable> {
             a = a.left;
         }
         return bh;
+    }
+
+    // @TODO remove
+    public void printRoots() {
+        System.out.print("Roots: ");
+        for (Node<T> node : roots) {
+            System.out.print(node.element + " ");
+        }
+        System.out.println();
+    }
+
+    // @TODO remove
+    private void printPath(ArrayList<Node<T>> path) {
+        System.out.print("Path: ");
+        for (Node<T> node : path) {
+            System.out.print(node.element + " ");
+        }
+        System.out.println();
     }
 }

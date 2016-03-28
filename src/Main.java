@@ -27,6 +27,7 @@ public class Main {
                         }
                         rbTree.insert(Integer.parseInt(input));
 
+                        rbTree.printRoots();
                         rbTree.print();
                         // rbTree.printAll();
                     }
