@@ -11,28 +11,22 @@ public class Main {
         RBTree<Integer> rbTree = new RBTree<Integer>();
         Scanner reader = new Scanner(System.in);
 
-        System.out.println("1. Manual, 2. Random");
+        System.out.println("1. Manual, 2. Random, p. print, all. print all revisions, new. new tree, t. test black height, v. enable visualisation, r. restore tree");
         System.out.print("Input: ");
         String input = "";
         input = reader.nextLine();
         while (!input.equals("exit")) {
             switch (input) {
                 case ("1"):
-                    while (input.toLowerCase() != "exit") {
+                    while (!input.toLowerCase().equals("exit")) {
                         System.out.print("Insert: ");
                         input = reader.nextLine();
 
-                        if (input.equals("a")) {
-                            rbTree.printAll();
-                        }
-                        else if (input.equals("r")) {
-                            System.out.print("Tree #: ");
-                            input = reader.nextLine();
-                            rbTree.restoreTree(Integer.parseInt(input)-1);
-                        }
-                        else {
+                        try {
                             rbTree.insert(Integer.parseInt(input));
                             rbTree.print();
+                        } catch (NumberFormatException e) {
+
                         }
                     }
                     break;
@@ -54,32 +48,60 @@ public class Main {
 
 
 
-                    for (int i = 0; i < 1; i++) {
-
-                        rbTree = new RBTree<>();
-                        while (inserts < nr) {
-                            Integer random = rand.nextInt(to - from + 1) + from;
-                            inserts++;
-                            // System.out.println(inserts + ": inserting \"" + nr + "\"");
-                            rbTree.insert(random);
-                            // rbTree.print();
-                        }
-                        rbTree.print();
-                        // rbTree.testBlackHeight();
-                        inserts = 0;
-                        System.out.println(i+1);
-
+                    while (inserts < nr) {
+                        Integer random = rand.nextInt(to - from + 1) + from;
+                        inserts++;
+                        // System.out.println(inserts + ": inserting \"" + nr + "\"");
+                        rbTree.insert(random);
                     }
+                    rbTree.print();
 
-                    // rbTree.printAll();
 
                     break;
-                case ("3"):
+                case ("all"):
                     rbTree.printAll();
+
+                    break;
+
+                case ("new"):
+                    rbTree = new RBTree<Integer>();
+                    break;
+
+                case ("r"):
+
+                    System.out.print("Tree #: ");
+                    input = reader.nextLine();
+                    rbTree.restoreTree(Integer.parseInt(input)-1);
+
+                    break;
+
+                case ("p"):
+                    rbTree.print();
+
+                    break;
+
+                case ("v"):
+                    rbTree.setVisualization(!rbTree.getVisualization());
+
+                    if (rbTree.getVisualization()) {
+                        System.out.println("Visualization enabled");
+                    }
+                    else {
+                        System.out.println("Visualization disabled");
+                    }
+
+                    break;
+
+                case ("t"):
+                    rbTree.testBlackHeight();
+                    break;
+
+
                 default:
 
                     break;
             }
+            System.out.print("Input: ");
             input = reader.nextLine();
         }
     }

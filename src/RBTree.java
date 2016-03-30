@@ -95,6 +95,8 @@ public class RBTree<T extends Comparable> {
         // fix
         fix(path);
         this.roots.add(this.root);
+        if (visualization) System.out.println("\u001B[32m" + "Red-Black-Tree stable" + "\u001B[0m");
+
     }
 
     private void fix(ArrayList<Node<T>> path) {
@@ -397,5 +399,13 @@ public class RBTree<T extends Comparable> {
     public void restoreTree(Integer root) {
         this.root = this.roots.get(root);
         System.out.println("Restored");
+    }
+
+    public Boolean getVisualization() {
+        return visualization;
+    }
+
+    public void setVisualization(Boolean visualization) {
+        this.visualization = visualization;
     }
 }
