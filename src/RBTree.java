@@ -83,11 +83,11 @@ public class RBTree<T extends Comparable> {
         }
         else if (element.compareTo(path.get(path.size()-1).element) < 0) {
             path.get(path.size()-1).left = newNode;
-            this.root = path.get(0); // @TODO fix bug
+            this.root = path.get(0);
         }
         else {
             path.get(path.size()-1).right = newNode;
-            this.root = path.get(0); // @TODO fix bug
+            this.root = path.get(0);
         }
 
         path.add(newNode);
@@ -367,7 +367,6 @@ public class RBTree<T extends Comparable> {
         }
     }
 
-    // @TODO remove
     public void printRoots() {
         System.out.print("Roots: ");
         for (Node<T> node : roots) {
@@ -376,7 +375,6 @@ public class RBTree<T extends Comparable> {
         System.out.println();
     }
 
-    // @TODO remove
     private void printPath(ArrayList<Node<T>> path) {
         System.out.print("Path: ");
         for (Node<T> node : path) {
