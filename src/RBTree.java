@@ -14,7 +14,7 @@ public class RBTree<T extends Comparable> {
     private ArrayList<Node<T>> roots;
 
     public RBTree() {
-        this.nil = new Node<T>(null, null, null,null);
+        this.nil = new Node<T>(null, null, null);
         this.nil.left = this.nil;
         this.nil.right = this.nil;
         this.nil.setRed(false);
