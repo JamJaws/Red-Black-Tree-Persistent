@@ -19,6 +19,7 @@ public class Main {
             switch (input) {
                 case ("1"):
                     while (!input.toLowerCase().equals("exit")) {
+                        System.out.print("Type exit to cancel input");
                         System.out.print("Insert: ");
                         input = reader.nextLine();
 
